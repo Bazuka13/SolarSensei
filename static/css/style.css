@@ -1,3 +1,6 @@
+/* =========================================
+   1. GLOBAL VARIABLES & RESET
+   ========================================= */
 :root {
     --solar-amber: #facc15;
     --solar-glow: rgba(245, 158, 11, 0.4);
@@ -8,48 +11,60 @@ body {
     background-color: var(--bg-dark);
     font-family: 'Plus Jakarta Sans', sans-serif;
     color: white;
-    overflow-x: hidden;
+    overflow-x: hidden; /* Prevents horizontal scroll from glowing orbs */
 }
 
-/* Sidebar Glow Logic (Hover Only) */
+/* =========================================
+   2. SIDEBAR NAVIGATION (Floating Circles)
+   ========================================= */
+
+/* Base style for nav icons */
 .nav-item {
     width: 56px;
     height: 56px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    
+    /* Smooth transition for hover effects */
     transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-    background: rgba(255,255,255,0.02);
+    
+    background: rgba(255, 255, 255, 0.02);
     color: #9ca3af; /* gray-400 */
     border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.04);
+    border: 1px solid rgba(255, 255, 255, 0.04);
     position: relative;
-    overflow: visible;
+    overflow: visible; /* Allows glow to spill outside */
 }
 
-/* inner subtle ring */
+/* Inner subtle ring for depth */
 .nav-item::before {
     content: '';
     position: absolute;
     inset: 6px;
     border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.02);
-    box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255, 255, 255, 0.02);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
 }
 
-.nav-item svg { width: 20px; height: 20px; }
+.nav-item svg {
+    width: 20px;
+    height: 20px;
+}
 
+/* Hover State */
 .nav-item:hover {
     color: var(--solar-amber);
-    transform: translateY(-2px);
+    transform: translateY(-2px); /* Slight lift */
 }
 
+/* Active State (Current Page) */
 .nav-item.active {
     color: var(--solar-amber);
     z-index: 50;
 }
 
-/* strong amber halo for active / emphasized item */
+/* The "Halo" Glow Effect for Active Item */
 .nav-item.active::after {
     content: '';
     position: absolute;
@@ -59,41 +74,55 @@ body {
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    background: radial-gradient(circle at center, rgba(250,204,21,0.28) 0%, rgba(250,204,21,0.12) 30%, transparent 55%);
+    
+    /* Complex gradient for a realistic light dispersion effect */
+    background: radial-gradient(circle at center, rgba(250, 204, 21, 0.28) 0%, rgba(250, 204, 21, 0.12) 30%, transparent 55%);
     filter: blur(20px) saturate(140%);
     z-index: -1;
 }
 
-/* slightly stronger shadow when hovering active */
-.nav-item.active:hover::after { filter: blur(22px) saturate(160%); }
+/* Intensify glow when hovering the active item */
+.nav-item.active:hover::after {
+    filter: blur(22px) saturate(160%);
+}
 
-/* Glassmorphism Cards */
+/* =========================================
+   3. UTILITY CLASSES
+   ========================================= */
+
+/* Glassmorphism Effect */
 .glass-card {
     background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px); /* Safari support */
     border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Stepper Logic */
-.step-active { border-color: var(--solar-amber); color: var(--solar-amber); background: rgba(250, 204, 21, 0.1); }
-.step-inactive { border-color: rgba(255, 255, 255, 0.1); color: #4b5563; }
+/* Map Customizations (Leaflet) */
+#map {
+    filter: brightness(0.6) contrast(1.2); /* Dark mode map style */
+}
 
-/* Map Customizations */
-#map { filter: brightness(0.6) contrast(1.2); }
 .custom-marker {
-    width: 20px; height: 20px; background: var(--solar-amber);
-    border: 4px solid white; border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    background: var(--solar-amber);
+    border: 4px solid white;
+    border-radius: 50%;
     box-shadow: 0 0 20px var(--solar-amber);
 }
 
-/* Hero / Glowy typography */
+/* =========================================
+   4. HERO SECTION
+   ========================================= */
 .hero {
     position: relative;
     padding-top: 4rem;
     padding-bottom: 4rem;
 }
+
+/* Ambient background glow behind the hero text */
 .hero::before {
-    /* subtle radial glow behind hero */
     content: '';
     position: absolute;
     left: 50%;
@@ -101,26 +130,30 @@ body {
     transform: translateX(-50%);
     width: 900px;
     height: 420px;
-    background: radial-gradient(circle at center, rgba(250,204,21,0.14), transparent 30%);
+    background: radial-gradient(circle at center, rgba(250, 204, 21, 0.14), transparent 30%);
     filter: blur(80px);
     pointer-events: none;
     z-index: 0;
 }
+
 .hero-title {
     font-size: 4.5rem;
     line-height: 1.02;
     font-weight: 800;
     letter-spacing: -0.02em;
     color: #fff;
-    text-shadow: 0 6px 30px rgba(0,0,0,0.6), 0 0 20px rgba(250,204,21,0.15);
+    text-shadow: 0 6px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(250, 204, 21, 0.15);
     position: relative;
     z-index: 1;
 }
+
 .hero-highlight {
     display: inline-block;
     color: var(--solar-amber);
-    text-shadow: 0 0 32px rgba(250,204,21,0.9), 0 0 80px rgba(250,204,21,0.35);
+    /* Neon glow effect for highlighted text */
+    text-shadow: 0 0 32px rgba(250, 204, 21, 0.9), 0 0 80px rgba(250, 204, 21, 0.35);
 }
+
 .hero-subtitle {
     color: #9ca3af; /* gray-400 */
     max-width: 60ch;
@@ -129,38 +162,34 @@ body {
     z-index: 1;
 }
 
-/* CTA buttons */
-.cta-wrap { position: relative; z-index: 1; }
-.cta-primary {
-    background: linear-gradient(180deg, #ffda66 0%, #f59e0b 100%);
-    color: #0b0b0b;
-    padding: 1rem 2.25rem;
-    border-radius: 14px;
-    font-weight: 800;
-    box-shadow: 0 10px 50px rgba(250,204,21,0.22), 0 6px 20px rgba(0,0,0,0.6);
-    transition: transform 0.18s ease, box-shadow 0.18s ease;
-}
-.cta-primary:hover { transform: translateY(-3px); box-shadow: 0 18px 80px rgba(250,204,21,0.28); }
-.cta-secondary {
-    padding: 1rem 2.25rem;
-    border-radius: 14px;
-    border: 2px solid rgba(250,204,21,0.25);
-    color: var(--solar-amber);
-    background: transparent;
-    font-weight: 700;
-}
-
-/* responsive tweaks */
+/* Responsive Typography */
 @media (max-width: 768px) {
     .hero-title { font-size: 2.25rem; }
     .hero::before { width: 360px; height: 200px; top: 40%; }
 }
 
-/* CTA glow halo (stronger glowing background) */
+/* =========================================
+   5. BUTTONS (CTA)
+   ========================================= */
+.cta-wrap {
+    position: relative;
+    z-index: 1;
+}
+
+/* Primary Button (Amber Gradient) */
 .cta-primary {
     position: relative;
     z-index: 2;
+    background: linear-gradient(180deg, #ffda66 0%, #f59e0b 100%);
+    color: #0b0b0b;
+    padding: 1rem 2.25rem;
+    border-radius: 14px;
+    font-weight: 800;
+    box-shadow: 0 10px 50px rgba(250, 204, 21, 0.22), 0 6px 20px rgba(0, 0, 0, 0.6);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
+
+/* Outer Glow for CTA */
 .cta-primary::after {
     content: '';
     position: absolute;
@@ -170,21 +199,72 @@ body {
     width: calc(100% + 48px);
     height: calc(100% + 28px);
     border-radius: 18px;
-    background: radial-gradient(closest-side, rgba(250,204,21,0.28), rgba(250,204,21,0.12) 40%, transparent 60%);
+    background: radial-gradient(closest-side, rgba(250, 204, 21, 0.28), rgba(250, 204, 21, 0.12) 40%, transparent 60%);
     filter: blur(18px) saturate(120%);
     z-index: -1;
     transition: opacity 180ms ease, transform 180ms ease;
     opacity: 1;
 }
-.cta-primary:hover::after { transform: translate(-50%, -52%) scale(1.03); opacity: 1; }
 
-/* Metrics row */
-.metrics-section { margin-top: 4rem; padding-top: 2.5rem; position: relative; z-index: 1; }
-.metrics-divider { height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); margin-bottom: 2.25rem; }
-.metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.5rem; align-items: start; max-width: 1100px; margin: 0 auto; }
+.cta-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 80px rgba(250, 204, 21, 0.28);
+}
+
+.cta-primary:hover::after {
+    transform: translate(-50%, -52%) scale(1.03);
+    opacity: 1;
+}
+
+/* Secondary Button (Outline) */
+.cta-secondary {
+    padding: 1rem 2.25rem;
+    border-radius: 14px;
+    border: 2px solid rgba(250, 204, 21, 0.25);
+    color: var(--solar-amber);
+    background: transparent;
+    font-weight: 700;
+}
+
+/* =========================================
+   6. METRICS SECTION
+   ========================================= */
+.metrics-section {
+    margin-top: 4rem;
+    padding-top: 2.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.metrics-divider {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+    margin-bottom: 2.25rem;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2.5rem;
+    align-items: start;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
 .metric { text-align: center; }
-.metric-value { font-size: 2.5rem; color: var(--solar-amber); font-weight: 800; text-shadow: 0 6px 24px rgba(0,0,0,0.6), 0 0 18px rgba(250,204,21,0.14); }
-.metric-label { margin-top: 0.5rem; color: #9ca3af; font-weight: 600; }
+
+.metric-value {
+    font-size: 2.5rem;
+    color: var(--solar-amber);
+    font-weight: 800;
+    text-shadow: 0 6px 24px rgba(0, 0, 0, 0.6), 0 0 18px rgba(250, 204, 21, 0.14);
+}
+
+.metric-label {
+    margin-top: 0.5rem;
+    color: #9ca3af;
+    font-weight: 600;
+}
 
 @media (max-width: 900px) {
     .metrics-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
@@ -193,23 +273,88 @@ body {
 
 @media (max-width: 480px) {
     .metrics-grid { grid-template-columns: 1fr; }
-    .hero-title { font-size: 1.9rem; }
 }
 
-/* Features / How it works section */
-.features-section { padding: 6rem 0; position: relative; z-index: 1; }
-.features-title { text-align: center; color: #fff; font-size: 2.25rem; font-weight: 800; }
-.features-sub { text-align: center; color: #9ca3af; margin-top: 0.75rem; margin-bottom: 3.5rem; }
-.features-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; align-items: center; max-width: 1200px; margin: 0 auto; }
-.feature-step { text-align: center; padding: 2rem 1rem; position: relative; }
-.step-number { font-size: 5rem; color: rgba(250,204,21,0.18); font-weight: 800; line-height: 1; margin-bottom: 0.6rem; }
-.step-title { font-size: 1.25rem; color: #fff; font-weight: 800; margin-top: 0.5rem; }
-.step-desc { color: #9ca3af; margin-top: 0.75rem; max-width: 36ch; margin-left: auto; margin-right: auto; }
-.step-arrow { position: absolute; right: -20px; top: 50%; transform: translateY(-50%); color: rgba(250,204,21,0.35); font-size: 2rem; }
+/* =========================================
+   7. FEATURES SECTION (How it Works)
+   ========================================= */
+.features-section {
+    padding: 6rem 0;
+    position: relative;
+    z-index: 1;
+}
+
+.features-title {
+    text-align: center;
+    color: #fff;
+    font-size: 2.25rem;
+    font-weight: 800;
+}
+
+.features-sub {
+    text-align: center;
+    color: #9ca3af;
+    margin-top: 0.75rem;
+    margin-bottom: 3.5rem;
+}
+
+.features-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.feature-step {
+    text-align: center;
+    padding: 2rem 1rem;
+    position: relative;
+}
+
+.step-number {
+    font-size: 5rem;
+    color: rgba(250, 204, 21, 0.18);
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 0.6rem;
+}
+
+.step-title {
+    font-size: 1.25rem;
+    color: #fff;
+    font-weight: 800;
+    margin-top: 0.5rem;
+}
+
+.step-desc {
+    color: #9ca3af;
+    margin-top: 0.75rem;
+    max-width: 36ch;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Arrow between steps */
+.step-arrow {
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(250, 204, 21, 0.35);
+    font-size: 2rem;
+}
+
 .feature-center { position: relative; }
 
-/* large CTA under features */
-.features-cta { display: flex; justify-content: center; margin-top: 4rem; }
+/* Large CTA at bottom of features */
+.features-cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 4rem;
+}
+
 .features-cta .cta-primary {
     padding: 1.25rem 3.5rem;
     border-radius: 26px;
@@ -222,90 +367,173 @@ body {
     .step-number { font-size: 3.25rem; }
 }
 
-/* Analyze page card and controls */
+/* =========================================
+   8. ANALYZE PAGE STYLES
+   ========================================= */
+
+/* The main form card */
 #form-container .glass-card {
     border-radius: 40px;
     padding: 3rem;
-    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
-    border: 1px solid rgba(250,204,21,0.08);
-    box-shadow: 0 30px 100px rgba(250,204,21,0.08), inset 0 2px 30px rgba(0,0,0,0.6);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.02));
+    border: 1px solid rgba(250, 204, 21, 0.08);
+    box-shadow: 0 30px 100px rgba(250, 204, 21, 0.08), inset 0 2px 30px rgba(0, 0, 0, 0.6);
 }
 
-#form-container .text-center.space-y-2 { position: relative; z-index: 2; }
+#form-container .text-center.space-y-2 {
+    position: relative;
+    z-index: 2;
+}
 
-/* Step dots */
+/* Stepper Dots (Progress Bar) */
 .step-active {
-    width: 56px; height: 56px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center;
-    background: rgba(250,204,21,0.06); color: var(--solar-amber); border: 1px solid rgba(250,204,21,0.16);
-    box-shadow: 0 10px 30px rgba(250,204,21,0.12);
-}
-.step-inactive {
-    width: 56px; height: 56px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center;
-    background: rgba(255,255,255,0.02); color: #4b5563; border: 1px solid rgba(255,255,255,0.04);
+    width: 56px;
+    height: 56px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(250, 204, 21, 0.06);
+    color: var(--solar-amber);
+    border: 1px solid rgba(250, 204, 21, 0.16);
+    box-shadow: 0 10px 30px rgba(250, 204, 21, 0.12);
 }
 
-/* Input field styling for analyze page */
+.step-inactive {
+    width: 56px;
+    height: 56px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.02);
+    color: #4b5563;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* Form Inputs */
 .analyze-input {
-    background: rgba(0,0,0,0.45);
-    border: 1px solid rgba(250,204,21,0.18);
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(250, 204, 21, 0.18);
     padding: 1.25rem 1.5rem;
     border-radius: 28px;
     outline: none;
     color: #ffffff;
     transition: box-shadow 160ms ease, border-color 160ms ease;
 }
-.analyze-input::placeholder { color: rgba(255,255,255,0.38); }
-.analyze-input:focus { box-shadow: 0 20px 60px rgba(250,204,21,0.12); border-color: rgba(250,204,21,0.28); }
 
-/* analyze buttons */
+.analyze-input::placeholder { color: rgba(255, 255, 255, 0.38); }
+
+.analyze-input:focus {
+    box-shadow: 0 20px 60px rgba(250, 204, 21, 0.12);
+    border-color: rgba(250, 204, 21, 0.28);
+}
+
+/* Form Buttons */
 .analyze-back {
     background: transparent;
     color: #9ca3af;
-    border: 1px solid rgba(255,255,255,0.04);
+    border: 1px solid rgba(255, 255, 255, 0.04);
     padding: 0.75rem 1.25rem;
     border-radius: 12px;
 }
+
 .analyze-next {
-    background: linear-gradient(180deg,#ffda66 0%,#f59e0b 100%);
+    background: linear-gradient(180deg, #ffda66 0%, #f59e0b 100%);
     color: #0b0b0b;
     padding: 0.75rem 1.5rem;
     border-radius: 18px;
-    box-shadow: 0 20px 60px rgba(250,204,21,0.22);
+    box-shadow: 0 20px 60px rgba(250, 204, 21, 0.22);
     border: none;
 }
 
-/* small responsiveness */
 @media (max-width: 640px) {
     .step-active, .step-inactive { width: 44px; height: 44px; }
     #form-container .glass-card { padding: 2rem; }
     .analyze-input { padding: 1rem; border-radius: 20px; }
 }
 
+/* =========================================
+   9. INTELLIGENT FEATURES (Grid)
+   ========================================= */
+.features-section.grid-layout {
+    margin-top: 4rem;
+    padding: 4rem 0;
+}
 
-/* Features (large glowing cards) */
-.features-section { margin-top: 4rem; padding: 4rem 0; position: relative; }
-.features-heading { text-align: center; margin-bottom: 1rem; font-size: 2.5rem; font-weight: 800; }
-.features-heading .highlight { color: var(--solar-amber); text-shadow: 0 0 26px rgba(250,204,21,0.45); }
-.features-sub { text-align: center; color: #9ca3af; margin-bottom: 2.25rem; max-width: 900px; margin-left: auto; margin-right: auto; }
-.features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; max-width: 1200px; margin: 0 auto; }
-.feature-card { position: relative; padding: 2.25rem; border-radius: 22px; background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.04); overflow: visible; }
+.features-heading {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 2.5rem;
+    font-weight: 800;
+}
+
+.features-heading .highlight {
+    color: var(--solar-amber);
+    text-shadow: 0 0 26px rgba(250, 204, 21, 0.45);
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Glowing Border Cards */
+.feature-card {
+    position: relative;
+    padding: 2.25rem;
+    border-radius: 22px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    overflow: visible;
+}
+
+/* Subtle glow behind card */
 .feature-card::before {
     content: '';
     position: absolute;
     inset: -8px;
     border-radius: 26px;
-    background: radial-gradient(closest-side, rgba(250,204,21,0.06), transparent 45%);
+    background: radial-gradient(closest-side, rgba(250, 204, 21, 0.06), transparent 45%);
     filter: blur(18px);
     z-index: -1;
 }
-.feature-icon { width: 48px; height: 48px; border-radius: 12px; display:flex; align-items:center; justify-content:center; background: rgba(250,204,21,0.06); color: var(--solar-amber); box-shadow: 0 8px 30px rgba(250,204,21,0.06); }
-.feature-title { font-size: 1.125rem; font-weight: 800; margin-top: 1rem; }
-.feature-desc { color: #9ca3af; margin-top: 0.75rem; line-height: 1.6; }
-.feature-card:hover::before { filter: blur(28px) saturate(120%); }
+
+.feature-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(250, 204, 21, 0.06);
+    color: var(--solar-amber);
+    box-shadow: 0 8px 30px rgba(250, 204, 21, 0.06);
+}
+
+.feature-title {
+    font-size: 1.125rem;
+    font-weight: 800;
+    margin-top: 1rem;
+}
+
+.feature-desc {
+    color: #9ca3af;
+    margin-top: 0.75rem;
+    line-height: 1.6;
+}
+
+.feature-card:hover::before {
+    filter: blur(28px) saturate(120%);
+}
 
 @media (max-width: 1100px) {
     .features-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
 @media (max-width: 600px) {
     .features-grid { grid-template-columns: 1fr; }
     .features-heading { font-size: 1.5rem; }
