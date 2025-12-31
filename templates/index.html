@@ -1,0 +1,106 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-24">
+    <section class="hero text-center space-y-8 pt-12">
+        <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full border border-amber-500/20 bg-amber-500/5 text-amber-500 text-xs font-bold uppercase tracking-widest" style="position:relative; z-index:1;">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> AI-Powered Solar Intelligence
+        </div>
+        <h1 class="hero-title">Where Energy <br> <span class="hero-highlight">Becomes Intelligence</span></h1>
+        <p class="hero-subtitle">Harness the power of AI to make smarter solar investment decisions. Get personalized insights, accurate ROI predictions, and comprehensive risk assessments.</p>
+        <div class="flex justify-center gap-6 cta-wrap">
+            <a href="/analyze" class="cta-primary">Start Analysis →</a>
+            <a href="/explore" class="cta-secondary">Explore Solar Map</a>
+        </div>
+
+    </section>
+
+    <!-- Metrics row (50K+, ₹2.5Cr, 98%, 15+) -->
+    <section class="metrics-section">
+        <div class="metrics-divider"></div>
+        <div class="metrics-grid">
+            <div class="metric">
+                <div class="metric-value">50K+</div>
+                <div class="metric-label">Projects Analyzed</div>
+            </div>
+
+            <div class="metric">
+                <div class="metric-value">₹2.5Cr</div>
+                <div class="metric-label">Savings Generated</div>
+            </div>
+
+            <div class="metric">
+                <div class="metric-value">98%</div>
+                <div class="metric-label">Accuracy Rate</div>
+            </div>
+
+            <div class="metric">
+                <div class="metric-value">15+</div>
+                <div class="metric-label">States Covered</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features / How it works -->
+    <section class="features-section">
+        <h3 class="features-title">How <span class="hero-highlight">SolarSensei AI</span> Works</h3>
+        <p class="features-sub">Three simple steps to your personalized solar investment report.</p>
+
+        <div class="features-row">
+            <div class="feature-step">
+                <div class="step-number">01</div>
+                <div class="step-title">Enter Details</div>
+                <div class="step-desc">Provide your location, electricity bill, and property details.</div>
+                <div class="step-arrow">→</div>
+            </div>
+
+            <div class="feature-step feature-center">
+                <div class="step-number">02</div>
+                <div class="step-title">AI Analysis</div>
+                <div class="step-desc">Our AI processes your data against thousands of solar installation records.</div>
+                <div class="step-arrow">→</div>
+            </div>
+
+            <div class="feature-step">
+                <div class="step-number">03</div>
+                <div class="step-title">Get Insights</div>
+                <div class="step-desc">Receive a comprehensive report with ROI projections and recommendations.</div>
+            </div>
+        </div>
+
+        <div class="features-cta">
+            <a href="/analyze" class="cta-primary">Get Your Free Analysis </a>
+        </div>
+    </section>
+    <!-- Intelligent features (glowing cards) -->
+    <section class="features-section">
+        <h2 class="features-heading">Intelligent Features for <span class="highlight">Smart Decisions</span></h2>
+        <p class="features-sub">Our platform combines cutting-edge AI with comprehensive solar data to deliver insights you can trust.</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">☀️</div>
+                <div class="feature-title">AI-Powered Analysis</div>
+                <div class="feature-desc">Advanced machine learning algorithms analyze your location, weather patterns, and energy consumption.</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <div class="feature-title">ROI Projections</div>
+                <div class="feature-desc">Get accurate financial forecasts with detailed savings estimates over 25+ years.</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <div class="feature-title">Risk Assessment</div>
+                <div class="feature-desc">Comprehensive evaluation of potential risks and maintenance requirements.</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🌿</div>
+                <div class="feature-title">Environmental Impact</div>
+                <div class="feature-desc">Track your carbon footprint reduction and contribution to sustainability.</div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

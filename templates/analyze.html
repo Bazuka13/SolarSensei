@@ -1,0 +1,196 @@
+{% extends "layout.html" %}
+{% block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+    .analysis-hidden { display: none !important; }
+    
+    /* 1. Consistent Amber Glow Theme */
+    .glow-card {
+        background: rgba(3, 7, 18, 0.7);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(250, 204, 21, 0.2); /* Amber Border */
+        border-radius: 24px;
+        box-shadow: 0 0 25px rgba(250, 204, 21, 0.05); /* Soft Amber Glow */
+        transition: all 0.3s ease;
+    }
+    .glow-card:hover {
+        border-color: rgba(250, 204, 21, 0.5);
+        box-shadow: 0 0 35px rgba(250, 204, 21, 0.15);
+    }
+
+    /* 2. Text Glow for Header */
+    .text-glow {
+        text-shadow: 0 0 20px rgba(250, 204, 21, 0.6);
+    }
+    
+    /* 3. Scrollbar for Insights */
+    .insights-box::-webkit-scrollbar { width: 6px; }
+    .insights-box::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+    .insights-box::-webkit-scrollbar-thumb { background: #facc15; border-radius: 10px; }
+
+    /* Existing styles ke neeche add karein */
+    .pdf-mode { 
+        background: #030712 !important; 
+        color: white !important; 
+        padding: 20px !important;
+    }
+</style>
+
+<div class="max-w-7xl mx-auto min-h-[85vh] flex flex-col items-center py-12 relative px-4">
+    
+    <div id="form-container" class="w-full space-y-12 block">
+        <div class="text-center">
+            <h2 class="text-5xl font-extrabold tracking-tight text-white mb-4">
+                Solar Investment <span class="text-amber-500 text-glow">Analysis</span>
+            </h2>
+            <p class="text-gray-400 text-lg">Complete the form below to receive your personalized report.</p>
+        </div>
+
+        <div class="relative flex items-center justify-between w-full max-w-2xl mb-20 mx-auto px-4">
+            <div class="absolute top-1/2 left-0 w-full h-[2px] bg-white/10 -translate-y-1/2 z-0"></div>
+            <div id="progress-bar" class="absolute top-1/2 left-0 h-[2px] bg-amber-500 -translate-y-1/2 z-0 transition-all duration-700" style="width: 0%;"></div>
+            <div id="node-1" class="relative z-10 w-12 h-12 rounded-full border-2 border-amber-500 bg-[#030712] flex items-center justify-center text-amber-500 shadow-[0_0_20px_rgba(250,204,21,0.5)] transition-all"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+            <div id="node-2" class="relative z-10 w-12 h-12 rounded-full border-2 border-white/10 bg-[#030712] flex items-center justify-center text-gray-500 transition-all"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
+            <div id="node-3" class="relative z-10 w-12 h-12 rounded-full border-2 border-white/10 bg-[#030712] flex items-center justify-center text-gray-500 transition-all text-xl font-bold">₹</div>
+            <div id="node-4" class="relative z-10 w-12 h-12 rounded-full border-2 border-white/10 bg-[#030712] flex items-center justify-center text-gray-500 transition-all"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></div>
+        </div>
+
+        <div class="glow-card w-full max-w-3xl mx-auto p-12">
+            <form id="solarForm">
+                <div id="stage-1" class="stage transition-all duration-500 opacity-100">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 text-white">📍 Location</h3>
+                    <input type="text" id="input-location" placeholder="e.g., Mumbai, Maharashtra" class="w-full bg-black/40 border border-amber-500/20 p-5 rounded-2xl focus:border-amber-500 outline-none text-white placeholder-gray-500">
+                </div>
+                <div id="stage-2" class="stage analysis-hidden opacity-0 transition-all">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 text-white">⚡ Energy Usage</h3>
+                    <input type="number" id="input-bill" placeholder="Monthly Bill (₹)" class="w-full bg-black/40 border border-amber-500/20 p-5 rounded-2xl focus:border-amber-500 outline-none text-white placeholder-gray-500">
+                </div>
+                <div id="stage-3" class="stage analysis-hidden opacity-0 transition-all">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 text-white">₹ Budget</h3>
+                    <div class="py-8"><input type="range" id="budgetRange" min="50000" max="1000000" step="10000" value="200000" class="w-full h-2 bg-white/10 rounded-lg appearance-none accent-amber-500"><div class="flex justify-between mt-6"><span class="text-gray-500">₹50k</span><span id="budgetValueDisplay" class="text-amber-500 text-2xl font-black">₹2,00,000</span><span class="text-gray-500">₹10L</span></div></div>
+                </div>
+                <div id="stage-4" class="stage analysis-hidden opacity-0 transition-all">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 text-white">📏 Property</h3>
+                    <input type="number" id="input-area" placeholder="Roof Area (sq. ft.)" class="w-full bg-black/40 border border-amber-500/20 p-5 rounded-2xl focus:border-amber-500 outline-none text-white placeholder-gray-500">
+                </div>
+                <div class="flex justify-between mt-12 pt-8 border-t border-white/5">
+                    <button type="button" id="backBtn" onclick="changeStage(-1)" class="px-10 py-4 bg-white/5 border border-white/10 rounded-2xl text-gray-400 font-bold opacity-0 pointer-events-none transition-all">← Back</button>
+                    <button type="button" id="nextBtn" onclick="changeStage(1)" class="px-12 py-4 bg-amber-500 text-black font-black rounded-2xl shadow-[0_0_20px_rgba(250,204,21,0.4)] hover:bg-amber-400 transition-all">Next →</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="loading-bridge" class="analysis-hidden fixed inset-0 z-[2000] bg-[#030712] flex flex-col items-center justify-center">
+        <div class="relative flex items-center justify-center">
+            <div class="w-24 h-24 rounded-full border-4 border-amber-500/10 loader-ring" style="border-top-color: #facc15; animation: spin-slow 1s linear infinite;"></div>
+            <div class="absolute w-12 h-12 bg-amber-500 rounded-full blur-md animate-pulse"></div>
+            <div class="absolute text-2xl">☀️</div>
+        </div>
+        <div class="mt-10 text-center space-y-2">
+            <h3 class="text-2xl font-black text-white tracking-widest uppercase">AI Analyzing</h3>
+            <p class="text-amber-500/60 font-bold animate-bounce">Consulting NREL Satellites...</p>
+        </div>
+    </div>
+
+    <div id="report-view" class="analysis-hidden w-full animate-in fade-in duration-700 space-y-10">
+        
+        <div class="text-center space-y-4">
+            <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full border border-green-500/30 bg-green-500/10 text-green-400 text-xs font-bold uppercase tracking-widest animate-pulse">
+                <span class="w-2 h-2 rounded-full bg-green-500"></span> Analysis Complete
+            </div>
+            <h2 class="text-5xl font-black tracking-tighter text-white">Solar Strategy for <span class="text-amber-500 text-glow uppercase" id="res-location">--</span></h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="glow-card p-6 text-center">
+                <div class="text-amber-500 text-3xl mb-3">⚡</div> <p class="text-gray-400 text-xs font-bold uppercase">System Size</p>
+                <h3 class="text-3xl font-black text-white mt-2" id="res-size">--</h3>
+                <p class="text-amber-500 text-xs mt-1 font-bold" id="res-tag">--</p>
+            </div>
+            <div class="glow-card p-6 text-center">
+                <div class="text-amber-500 text-3xl mb-3">💰</div> <p class="text-gray-400 text-xs font-bold uppercase">Net Cost</p>
+                <h3 class="text-3xl font-black text-white mt-2" id="res-cost">--</h3>
+                <p class="text-green-400 text-xs mt-1" id="res-subsidy">--</p>
+            </div>
+            <div class="glow-card p-6 text-center">
+                <div class="text-amber-500 text-3xl mb-3">📈</div> <p class="text-gray-400 text-xs font-bold uppercase">Annual Savings</p>
+                <h3 class="text-3xl font-black text-amber-500 mt-2" id="res-savings">--</h3>
+                <p class="text-gray-500 text-xs mt-1">Inflation Adjusted</p>
+            </div>
+            <div class="glow-card p-6 text-center">
+                <div class="text-amber-500 text-3xl mb-3">🌱</div> <p class="text-gray-400 text-xs font-bold uppercase">CO₂ Offset</p>
+                <h3 class="text-3xl font-black text-green-400 mt-2" id="res-co2">--</h3>
+                <p class="text-gray-500 text-xs mt-1">Tons / Year</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="glow-card p-6 lg:col-span-2">
+                <h3 class="text-lg font-bold text-white mb-4">📉 25-Year Financial Projection</h3>
+                <div class="h-80"><canvas id="gridChart"></canvas></div>
+            </div>
+
+            <div class="glow-card p-8 flex flex-col items-center justify-center relative overflow-hidden">
+                <h3 class="text-lg font-bold text-white mb-8">Feasibility Score</h3>
+                <div class="relative flex items-center justify-center mb-6">
+                    <svg class="w-56 h-56 transform -rotate-90">
+                        <circle cx="50%" cy="50%" r="45%" stroke="#333" stroke-width="12" fill="transparent"/>
+                        <circle id="score-ring" cx="50%" cy="50%" r="45%" stroke="#facc15" stroke-width="12" fill="transparent" stroke-dasharray="314" stroke-dashoffset="314" class="transition-all duration-1000 drop-shadow-[0_0_15px_rgba(250,204,21,0.5)]"/>
+                    </svg>
+                    <div class="absolute text-center">
+                        <span class="text-6xl font-black text-white block" id="res-score">--</span>
+                        <span class="text-gray-500 text-sm font-bold uppercase">/ 100</span>
+                    </div>
+                </div>
+                <p class="text-gray-400 text-sm text-center">Flux: <span id="res-flux-val" class="text-amber-500 font-bold">--</span> kWh/m²</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="glow-card p-6">
+                <h3 class="text-lg font-bold text-white mb-4">☀️ Monthly Output (Avg)</h3>
+                <div class="h-60"><canvas id="monthlyChart"></canvas></div>
+            </div>
+            
+            <div class="glow-card p-6">
+                <h3 class="text-lg font-bold text-white mb-4">⚡ Power vs Savings Potential</h3>
+                <div class="h-60"><canvas id="sensitivityChart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="glow-card p-8 border-l-4 border-l-amber-500">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                
+                <div class="lg:col-span-1">
+                    <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">📊 City Benchmark <span class="text-xs text-gray-500">(Yield/kW)</span></h3>
+                    <div id="comparison-container" class="space-y-4">
+                        </div>
+                </div>
+
+                <div class="lg:col-span-2 flex flex-col">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">🤖 Gemini AI Insights</h3>
+                    <div class="bg-black/40 rounded-xl p-6 border border-white/5 flex-grow insights-box overflow-y-auto">
+                        <div id="insights-container" class="space-y-4 text-sm text-gray-300">
+                        <p class="animate-pulse">Waiting for Gemini AI...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div data-html2canvas-ignore="true" class="flex justify-center gap-6 pt-8 border-t border-white/5">
+            <button onclick="downloadReport()" class="px-8 py-4 bg-amber-500 text-black font-black rounded-2xl shadow-[0_0_20px_rgba(250,204,21,0.4)] hover:bg-amber-400 transition-all flex items-center gap-2">
+                📥 Download PDF Report
+            </button>
+             <button onclick="location.reload()" class="px-8 py-4 bg-transparent border border-white/10 text-white font-bold rounded-2xl hover:bg-white/5 transition-all">
+                Start New Analysis
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/analysis.js') }}"></script>
+<style>@keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }</style>
+{% endblock %}
