@@ -1,40 +1,71 @@
+/* ==========================================================================
+   SOLAR MAP EXPLORER
+   Interactive map using Leaflet.js with Esri Dark Gray tiles.
+   Handles clicks, search queries, and side-panel data updates.
+   ========================================================================== */
+
 let map, marker;
-const mumbaiCoords = [19.0760, 72.8777];
+const DEFAULT_COORDS = [19.0760, 72.8777]; // Mumbai (Default Center)
 
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. Initialize Map (Dark Mode)
-    map = L.map('map', { zoomControl: false }).setView(mumbaiCoords, 5);
+    initMap();
+    initSearch();
+});
+
+/**
+ * Initialize the Leaflet map with custom dark theme tiles
+ */
+function initMap() {
+    // 1. Create Map Instance
+    map = L.map('map', { 
+        zoomControl: false, // We can add custom controls later if needed
+        attributionControl: false // Cleaner look
+    }).setView(DEFAULT_COORDS, 5);
     
-   // --- NEW GREY THEME MAP (Esri Dark Gray) ---
-    // Layer 1: Base Map (Grey Land)
+    // 2. Add "Dark Gray Base" Layer (The landmass)
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Esri',
         maxZoom: 16
     }).addTo(map);
 
-    // Layer 2: Labels & Borders (City Names on Top) - Isse text saaf dikhega
+    // 3. Add "Reference" Layer (Labels & Borders on top)
+    // This ensures city names are legible on top of the dark map
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
         maxZoom: 16
     }).addTo(map);
 
-    // 2. Click Handler
+    // 4. Attach Click Event
     map.on('click', function(e) {
-        handleMapClick(e.latlng.lat, e.latlng.lng);
+        handleMapInteraction(e.latlng.lat, e.latlng.lng);
     });
+}
 
-    // 3. Search Handler (Enter Key)
-    document.getElementById('map-search').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') searchLocation();
-    });
-});
+/**
+ * Initialize the search bar listener
+ */
+function initSearch() {
+    const searchInput = document.getElementById('map-search');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') performSearch();
+        });
+    }
+}
 
-// --- CORE LOGIC ---
+/* ==========================================================================
+   CORE INTERACTION LOGIC
+   ========================================================================== */
 
-async function handleMapClick(lat, lng) {
-    // Remove old marker
+/**
+ * Handles both map clicks and search results.
+ * 1. Drops a marker.
+ * 2. Pans the map.
+ * 3. Fetches solar data from the Python backend.
+ */
+async function handleMapInteraction(lat, lng) {
+    // 1. UI Updates (Marker & Map Move)
     if(marker) map.removeLayer(marker);
 
-    // Add glowing marker
+    // Custom Glowing Marker using CSS class
     marker = L.marker([lat, lng], {
         icon: L.divIcon({ 
             className: 'custom-marker', 
@@ -43,20 +74,21 @@ async function handleMapClick(lat, lng) {
         })
     }).addTo(map);
 
-    // Pan map smoothly
     map.flyTo([lat, lng], 8, { duration: 1.5 });
 
-    // Open Panel & Show Loader
+    // 2. Open Side Panel & Show Loader
     const panel = document.getElementById('snapshot-panel');
     const loader = document.getElementById('panel-loader');
     const content = document.getElementById('panel-content');
     
-    panel.style.transform = 'translateX(0)';
-    loader.classList.remove('hidden');
-    content.classList.add('hidden');
+    if(panel) {
+        panel.style.transform = 'translateX(0)';
+        loader.classList.remove('hidden');
+        content.classList.add('hidden');
+    }
 
+    // 3. API Call to Backend
     try {
-        // Fetch Data from Python Backend
         const response = await fetch('/api/explore', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -66,7 +98,7 @@ async function handleMapClick(lat, lng) {
         const data = await response.json();
 
         if (data.success) {
-            updatePanel(data);
+            updateSidePanel(data);
             loader.classList.add('hidden');
             content.classList.remove('hidden');
         } else {
@@ -75,14 +107,17 @@ async function handleMapClick(lat, lng) {
         }
 
     } catch (error) {
-        console.error("Map Error:", error);
-        loader.classList.add('hidden');
-        alert("Connection Error");
+        console.error("SolarSensei Map Error:", error);
+        if(loader) loader.classList.add('hidden');
+        alert("Connection Error. Please try again.");
     }
 }
 
-function updatePanel(data) {
-    // Text Data
+/**
+ * Updates the side panel HTML with fetched data
+ */
+function updateSidePanel(data) {
+    // 1. Text Fields
     document.getElementById('snap-location').innerText = data.location;
     document.getElementById('snap-coords').innerText = data.coords;
     document.getElementById('snap-flux').innerText = data.flux;
@@ -90,45 +125,52 @@ function updatePanel(data) {
     document.getElementById('snap-tag').innerText = data.tag;
     document.getElementById('snap-score').innerText = data.suitability;
 
-    // Visuals (Color Coding)
+    // 2. Visual Logic (Color Coding based on Solar Flux)
     const bar = document.getElementById('snap-bar');
     const tag = document.getElementById('snap-tag');
     
-    // Reset classes
+    // Reset base classes
     tag.className = "text-sm font-bold";
-    bar.className = "h-full w-[0%] transition-all duration-1000";
+    bar.className = "h-full w-[0%] transition-all duration-1000 rounded-full";
+    // Remove old gradient classes (safe way is to overwrite className or use specific logic)
+    // For simplicity, we re-assign standard Tailwind gradients below:
 
     if (data.flux > 5.0) {
+        // Excellent
         tag.classList.add("text-green-400");
         bar.classList.add("bg-gradient-to-r", "from-green-600", "to-green-400");
     } else if (data.flux > 4.0) {
+        // Good
         tag.classList.add("text-amber-400");
         bar.classList.add("bg-gradient-to-r", "from-amber-600", "to-amber-400");
     } else {
+        // Average
         tag.classList.add("text-orange-400");
         bar.classList.add("bg-gradient-to-r", "from-orange-600", "to-orange-400");
     }
 
-    // Animate Bar Width
+    // Animate the Suitability Bar
     setTimeout(() => {
         bar.style.width = `${data.suitability}%`;
     }, 100);
 
-    // Update "Full Report" Button Link (Pass Data via URL logic if needed, or just simple link)
-    // Here we simply redirect, but ideal UX would auto-fill the form on next page.
-    // For now, simple redirect:
+    // 3. Button Action
     document.getElementById('analyze-btn').onclick = function() {
         window.location.href = '/analyze';
     };
 }
 
-// --- UTILS ---
+/* ==========================================================================
+   UTILITY FUNCTIONS
+   ========================================================================== */
 
-async function searchLocation() {
+/**
+ * Search logic using OpenStreetMap (Nominatim)
+ */
+async function performSearch() {
     const query = document.getElementById('map-search').value;
     if(!query) return;
 
-    // Use Nominatim Public API for Search (Client Side is fine for this)
     try {
         const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`);
         const data = await res.json();
@@ -136,16 +178,22 @@ async function searchLocation() {
         if(data && data.length > 0) {
             const lat = parseFloat(data[0].lat);
             const lon = parseFloat(data[0].lon);
-            handleMapClick(lat, lon);
+            handleMapInteraction(lat, lon);
         } else {
-            alert("City not found!");
+            alert("Location not found! Try a major city name.");
         }
     } catch (e) {
-        console.error(e);
+        console.error("Search API Error:", e);
     }
 }
 
+/**
+ * Closes the side panel
+ */
 function closeSnapshot() {
-    document.getElementById('snapshot-panel').style.transform = 'translateX(120%)';
-    if(marker) map.removeLayer(marker);
+    const panel = document.getElementById('snapshot-panel');
+    if(panel) panel.style.transform = 'translateX(120%)';
+    
+    // Optional: Remove marker when closing
+    // if(marker) map.removeLayer(marker);
 }
