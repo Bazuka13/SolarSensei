@@ -22,8 +22,9 @@ Adopting solar energy is currently a complex and opaque process:
 3.  **Output:** A comprehensive, interactive dashboard with charts, AI-driven insights, and a downloadable PDF report.
 
 ---
-!!IMPORTANT!! 
-SOME TIMES APIS ARE NOT WORKING BECAUSE OF WHICH DATA AUTOMATICALLY SWITCHES TO RULE BASED DATA.
+
+###!!IMPORTANT!! 
+##SOME TIMES APIS ARE NOT WORKING BECAUSE OF WHICH DATA AUTOMATICALLY SWITCHES TO RULE BASED DATA.
 
 ## ✨ Key Features
 
