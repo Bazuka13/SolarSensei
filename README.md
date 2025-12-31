@@ -1,6 +1,7 @@
 # ☀️ SolarSensei: AI-Powered Solar Intelligence Platform
 
-![Project Banner](https://via.placeholder.com/1200x400?text=SolarSensei+Dashboard+Preview)
+![Uploading Screenshot 2025-12-31 214206.png…]()
+
 ## 🚀 Overview
 **SolarSensei** is a next-generation renewable energy dashboard designed to simplify the transition to solar power for homeowners and businesses. By combining **Satellite Data (NREL)**, **Geospatial Mapping**, and **Financial Modelling**, it provides accurate, location-specific investment analysis.
 
